@@ -61,14 +61,14 @@ export default function Explanation() {
               ))}
             </div>
             
-            <div className="mt-8 rounded-2xl overflow-hidden shadow-sm border border-gray-100 relative h-64">
+            <a href="/images/operations_diagram.png" target="_blank" rel="noopener noreferrer" className="block mt-8 rounded-2xl overflow-hidden shadow-sm border border-gray-100 relative h-96 md:h-[28rem] hover:shadow-md transition-shadow cursor-zoom-in">
               <Image 
                 src="/images/operations_diagram.png" 
                 alt="Call routing operational flow" 
                 fill 
-                className="object-contain bg-surface"
+                className="object-contain bg-surface p-4"
               />
-            </div>
+            </a>
           </div>
         </div>
       </div>

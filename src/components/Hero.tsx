@@ -22,10 +22,10 @@ export default function Hero() {
         </span>
         
         <h1 className="text-4xl md:text-5xl lg:text-6xl font-semibold text-primary leading-tight mb-6">
-          See how much booked revenue may be sitting in missed calls.
+          See how much appointment revenue may be sitting in missed calls.
         </h1>
         
-        <p className="text-lg md:text-xl text-text-muted mb-10 max-w-2xl leading-relaxed">
+        <p className="text-xl md:text-2xl text-text-muted max-w-2xl mx-auto mb-10 leading-relaxed font-light">
           Answer five simple questions and estimate the appointment revenue your med spa may have at risk from missed calls, after-hours inquiries, slow response, and campaign spikes.
         </p>
         

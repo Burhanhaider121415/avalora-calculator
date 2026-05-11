@@ -104,13 +104,25 @@ export default function DemoForm() {
                 <input id="time" name="time" type="text" className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all bg-gray-50/50" />
               </div>
             </div>
+            <div className="flex items-start gap-3 mt-6">
+              <input 
+                required 
+                id="consent" 
+                name="consent" 
+                type="checkbox" 
+                className="mt-1 w-4 h-4 text-primary bg-gray-50 border-gray-300 rounded focus:ring-primary"
+              />
+              <label htmlFor="consent" className="text-sm text-text-muted">
+                I agree that Avalora may call or text me about my demo request.
+              </label>
+            </div>
 
             <button 
               type="submit" 
               disabled={isSubmitting}
               className="w-full mt-6 px-8 py-4 bg-primary text-white rounded-lg font-medium hover:bg-primary-light transition-colors shadow-lg shadow-primary/20 disabled:opacity-70 disabled:cursor-not-allowed"
             >
-              {isSubmitting ? "Submitting..." : "Request My Private Voice Demo"}
+              {isSubmitting ? "Submitting..." : "Call Me With a Private Voice Demo"}
             </button>
             
             <p className="text-xs text-text-muted text-center mt-4 px-4">
