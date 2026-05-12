@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { CheckCircle2 } from "lucide-react";
 
@@ -40,6 +42,7 @@ export default function Solution() {
         <div className="flex flex-col items-center">
           <Link 
             href="#demo" 
+            onClick={() => import('@/utils/tracking').then(m => m.trackEvent('Hear AI Voice Live click'))}
             className="px-8 py-4 bg-primary text-white rounded-lg font-medium hover:bg-primary-light transition-colors shadow-lg shadow-primary/20 mb-4 inline-block"
           >
             Hear the AI Voice Live

@@ -145,21 +145,30 @@ export default function Calculator() {
             <div className="relative z-10 flex-grow">
               <div className="flex bg-white/10 p-1 rounded-lg mb-8 text-sm font-medium w-full overflow-hidden">
                 <button 
-                  onClick={() => setScenario("conservative")}
+                  onClick={() => {
+                    import('@/utils/tracking').then(m => m.trackEvent('Calculate button click', { scenario: 'conservative' }));
+                    setScenario("conservative");
+                  }}
                   className={clsx("flex-1 py-2 px-3 rounded-md transition-colors", scenario === "conservative" ? "bg-white text-primary shadow-sm" : "hover:bg-white/5 text-white/80")}
                   title="Lower leakage assumptions."
                 >
                   Conservative
                 </button>
                 <button 
-                  onClick={() => setScenario("realistic")}
+                  onClick={() => {
+                    import('@/utils/tracking').then(m => m.trackEvent('Calculate button click', { scenario: 'realistic' }));
+                    setScenario("realistic");
+                  }}
                   className={clsx("flex-1 py-2 px-3 rounded-md transition-colors", scenario === "realistic" ? "bg-white text-primary shadow-sm" : "hover:bg-white/5 text-white/80")}
                   title="A practical middle estimate."
                 >
                   Realistic
                 </button>
                 <button 
-                  onClick={() => setScenario("high")}
+                  onClick={() => {
+                    import('@/utils/tracking').then(m => m.trackEvent('Calculate button click', { scenario: 'high' }));
+                    setScenario("high");
+                  }}
                   className={clsx("flex-1 py-2 px-3 rounded-md transition-colors", scenario === "high" ? "bg-white text-primary shadow-sm" : "hover:bg-white/5 text-white/80")}
                   title="Useful during ad campaigns, peak hours, and seasonal demand."
                 >

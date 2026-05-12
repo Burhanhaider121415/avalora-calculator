@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 
@@ -56,12 +58,14 @@ export default function Report() {
             <div className="flex flex-col sm:flex-row gap-4">
               <Link 
                 href="#demo" 
+                onClick={() => import('@/utils/tracking').then(m => m.trackEvent('Report button click'))}
                 className="px-6 py-3 bg-surface text-primary border border-gray-200 rounded-lg font-medium hover:bg-gray-50 transition-colors text-center"
               >
                 Read the Miami After-Hours Report
               </Link>
               <Link 
                 href="#calculator" 
+                onClick={() => import('@/utils/tracking').then(m => m.trackEvent('Calculate button click'))}
                 className="px-6 py-3 bg-primary/5 text-primary border border-primary/10 rounded-lg font-medium hover:bg-primary/10 transition-colors text-center"
               >
                 Run My Number First

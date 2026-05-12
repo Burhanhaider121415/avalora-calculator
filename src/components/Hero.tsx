@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 
@@ -32,12 +34,14 @@ export default function Hero() {
         <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
           <Link 
             href="#calculator" 
+            onClick={() => import('@/utils/tracking').then(m => m.trackEvent('Calculate button click'))}
             className="w-full sm:w-auto px-8 py-4 bg-primary text-white rounded-lg font-medium hover:bg-primary-light transition-colors shadow-lg shadow-primary/20"
           >
             Calculate My Revenue Leak
           </Link>
           <Link 
             href="#demo" 
+            onClick={() => import('@/utils/tracking').then(m => m.trackEvent('Hear AI Voice Live click'))}
             className="w-full sm:w-auto px-8 py-4 bg-surface text-primary border border-primary/10 rounded-lg font-medium hover:bg-gray-50 transition-colors shadow-sm"
           >
             Hear the AI Voice Live

@@ -23,6 +23,7 @@ export default function DemoForm() {
       });
 
       if (response.ok) {
+        import('@/utils/tracking').then(m => m.trackEvent('Form submit', data));
         setSubmitted(true);
       } else {
         console.error('Failed to submit form');
@@ -55,9 +56,30 @@ export default function DemoForm() {
               </svg>
             </div>
             <h3 className="text-2xl font-semibold text-primary mb-2">Request Received</h3>
-            <p className="text-text-muted">
-              Thank you. We will be in touch shortly to schedule your private voice demo.
+            <p className="text-text-muted mb-8">
+              Your private demo request has been received. Avalora will prepare a relevant med spa-style voice demo based on your clinic details.
             </p>
+            
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <button 
+                onClick={() => {
+                  import('@/utils/tracking').then(m => m.trackEvent('Call Me Now click'));
+                  alert('The Retell AI demo agent is currently being prepared. We will contact you as soon as it is ready for live testing.');
+                }}
+                className="px-6 py-3 bg-primary text-white rounded-lg font-medium hover:bg-primary-light transition-colors shadow-sm"
+              >
+                Call Me Now With the AI Voice Demo
+              </button>
+              <button 
+                onClick={() => {
+                  import('@/utils/tracking').then(m => m.trackEvent('Contact Me Later click'));
+                  alert('Got it! We will reach out at your preferred time to schedule the demo.');
+                }}
+                className="px-6 py-3 bg-white text-primary border border-gray-200 rounded-lg font-medium hover:bg-gray-50 transition-colors shadow-sm"
+              >
+                Contact Me at My Best Time
+              </button>
+            </div>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8 space-y-4">
