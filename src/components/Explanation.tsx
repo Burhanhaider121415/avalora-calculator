@@ -1,27 +1,27 @@
 import Image from "next/image";
-import { Clock, Users, Zap, MessageSquare } from "lucide-react";
+import { PhoneMissed, Clock, AlertCircle, CalendarX } from "lucide-react";
 
 export default function Explanation() {
   const cards = [
     {
-      title: "After-hours demand",
-      description: "Prospects research treatments after work, at night, and on weekends.",
+      title: "Missed calls",
+      description: "When your front desk is checking in a patient, the second caller does not wait. They hang up and try the next clinic on their list.",
+      icon: PhoneMissed,
+    },
+    {
+      title: "Slow callbacks",
+      description: "High-intent leads cool down fast. A callback hours later often reaches someone who has already booked elsewhere.",
       icon: Clock,
     },
     {
-      title: "Front-desk overload",
-      description: "Receptionists are handling check-in, checkout, payments, reschedules, questions, walk-ins, and provider coordination.",
-      icon: Users,
+      title: "Booking friction",
+      description: "Too many steps, unclear next actions, or an unanswered form are enough to lose a patient who was ready to book.",
+      icon: AlertCircle,
     },
     {
-      title: "Campaign spikes",
-      description: "Ads create bursts of calls the front desk cannot always absorb.",
-      icon: Zap,
-    },
-    {
-      title: "Bilingual friction",
-      description: "In Miami, English/Spanish coverage can affect how quickly high-intent callers get helped.",
-      icon: MessageSquare,
+      title: "After-hours inquiries",
+      description: "Callers searching for treatments at night or on weekends reach voicemail. Most do not leave a message — they move on.",
+      icon: CalendarX,
     },
   ];
 
@@ -34,16 +34,17 @@ export default function Explanation() {
               Most revenue leaks do not look dramatic.
             </h2>
             <div className="text-lg text-text-muted space-y-4 mb-8">
-              <p>They look like one voicemail after 6 PM.</p>
-              <p>One caller who hangs up during checkout.</p>
-              <p>One Spanish-speaking patient who does not feel understood.</p>
-              <p>One ad lead who waits too long and books somewhere else.</p>
+              <p>They look like one missed call during checkout.</p>
+              <p>One website form that waits too long.</p>
+              <p>One Instagram DM that gets buried.</p>
+              <p>One after-hours inquiry that reaches voicemail.</p>
+              <p>One booking request that never gets confirmed.</p>
               <div className="w-12 h-px bg-gray-200 my-6"></div>
               <p>
-                In a Miami med spa, your receptionist is often managing check-ins, payments, reschedules, treatment questions, provider interruptions, and walk-ins at the same time.
+                In a Miami med spa, the gap between a patient inquiring and a patient booking is often smaller than it looks — and faster to lose than most clinics expect.
               </p>
               <p className="font-semibold text-primary">
-                When two calls arrive at once, one usually loses.
+                Speed, availability, and follow-through determine who books and who moves on.
               </p>
             </div>
           </div>

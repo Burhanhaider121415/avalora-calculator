@@ -5,12 +5,12 @@ import Link from "next/link";
 
 export default function Report() {
   const topics = [
-    "Why after-hours callers are often high-intent",
-    "Why voicemail is not the same as lead capture",
-    "Why one receptionist cannot absorb every peak-hour call",
-    "Why bilingual response matters in Miami",
-    "Why human-first during business hours + AI overflow after-hours is the better model",
-    "How to compare the calculator number against your current front-desk capacity"
+    "Why missed calls turn into competitor bookings within minutes",
+    "Why slow callbacks hurt conversion even when the lead seemed interested",
+    "Why DMs and website forms get buried and leads go cold",
+    "Why booking flow friction loses patients who were ready to commit",
+    "Why after-hours voicemail is still a consistent lead leak",
+    "How to compare your calculator results against your current front-desk capacity"
   ];
 
   return (
@@ -21,7 +21,7 @@ export default function Report() {
             <div className="relative w-full aspect-square max-w-md mx-auto">
               <Image
                 src="/images/report_mockup.png"
-                alt="Miami Med Spa After-Hours Revenue Report Mockup"
+                alt="Miami Med Spa Lead & Booking Recovery Report Mockup"
                 fill
                 className="object-contain"
               />
@@ -30,10 +30,10 @@ export default function Report() {
           
           <div className="w-full lg:w-7/12">
             <h2 className="text-3xl md:text-4xl font-semibold text-primary mb-4">
-              Miami Med Spa After-Hours Revenue Report
+              Miami Med Spa Lead &amp; Booking Recovery Report
             </h2>
             <p className="text-lg text-text-muted mb-8">
-              Why high-intent aesthetic leads disappear after 6 PM, during peak hours, and after ad campaigns — and what clinics can do about it.
+              Why high-intent aesthetic leads disappear through missed calls, slow callbacks, buried DMs, and unfinished booking requests — and what clinics can do about it.
             </p>
             
             <div className="bg-background rounded-2xl p-6 md:p-8 mb-8 border border-gray-100">
@@ -41,7 +41,7 @@ export default function Report() {
                 Miami med spas do not lose bookings only because demand is low.
               </p>
               <p className="text-text-muted mb-6">
-                They lose bookings when demand arrives at the wrong time: after work, during lunch-hour spikes, while the front desk is busy, or right after a campaign creates more calls than the team can answer live.
+                They lose bookings when a missed call is not returned fast enough, when a website form sits unanswered, when an Instagram DM gets buried, or when a caller reaches voicemail and decides not to leave a message.
               </p>
               
               <h4 className="font-semibold text-primary mb-3">What the report covers:</h4>
@@ -58,10 +58,10 @@ export default function Report() {
             <div className="flex flex-col sm:flex-row gap-4">
               <Link 
                 href="#demo" 
-                onClick={() => import('@/utils/tracking').then(m => m.trackEvent('Report button click'))}
+                onClick={() => import('@/utils/tracking').then(m => m.trackEvent('Report CTA click'))}
                 className="px-6 py-3 bg-surface text-primary border border-gray-200 rounded-lg font-medium hover:bg-gray-50 transition-colors text-center"
               >
-                Read the Miami After-Hours Report
+                Read the Lead Recovery Report
               </Link>
               <Link 
                 href="#calculator" 

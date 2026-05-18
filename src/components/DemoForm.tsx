@@ -41,10 +41,10 @@ export default function DemoForm() {
       <div className="container mx-auto px-6 max-w-xl">
         <div className="text-center mb-10">
           <h2 className="text-3xl md:text-4xl font-semibold text-primary mb-4">
-            Want to hear what this could sound like for your spa?
+            Want to see how Avalora would recover leads for your spa?
           </h2>
           <p className="text-lg text-text-muted">
-            Request a private voice demo built around a realistic med spa call: treatment inquiry, pricing question, appointment request, reschedule, or after-hours lead.
+            Request a private demo built around a realistic med spa scenario: missed call, slow callback, after-hours inquiry, booking request, or buried lead.
           </p>
         </div>
 
@@ -56,30 +56,12 @@ export default function DemoForm() {
               </svg>
             </div>
             <h3 className="text-2xl font-semibold text-primary mb-2">Request Received</h3>
-            <p className="text-text-muted mb-8">
-              Your private demo request has been received. Avalora will prepare a relevant med spa-style voice demo based on your clinic details.
+            <p className="text-text-muted mb-6">
+              Your demo request has been received. Our team will review your details and reach out to schedule a private walkthrough built around your clinic&apos;s situation.
             </p>
-            
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button 
-                onClick={() => {
-                  import('@/utils/tracking').then(m => m.trackEvent('Call Me Now click'));
-                  alert('The Retell AI demo agent is currently being prepared. We will contact you as soon as it is ready for live testing.');
-                }}
-                className="px-6 py-3 bg-primary text-white rounded-lg font-medium hover:bg-primary-light transition-colors shadow-sm"
-              >
-                Call Me Now With the AI Voice Demo
-              </button>
-              <button 
-                onClick={() => {
-                  import('@/utils/tracking').then(m => m.trackEvent('Contact Me Later click'));
-                  alert('Got it! We will reach out at your preferred time to schedule the demo.');
-                }}
-                className="px-6 py-3 bg-white text-primary border border-gray-200 rounded-lg font-medium hover:bg-gray-50 transition-colors shadow-sm"
-              >
-                Contact Me at My Best Time
-              </button>
-            </div>
+            <p className="text-sm text-text-muted px-4">
+              No pressure. No guaranteed revenue claims. We will be in touch at your preferred time.
+            </p>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8 space-y-4">
@@ -126,6 +108,25 @@ export default function DemoForm() {
                 <input id="time" name="time" type="text" className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all bg-gray-50/50" />
               </div>
             </div>
+
+            <div>
+              <label className="block text-sm font-medium text-primary mb-1" htmlFor="leadSlip">Where do leads slip most? <span className="text-text-muted font-normal">(Optional)</span></label>
+              <select
+                id="leadSlip"
+                name="leadSlip"
+                onChange={(e) => import('@/utils/tracking').then(m => m.trackEvent('Lead slip dropdown selected', { value: e.target.value }))}
+                className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all bg-gray-50/50"
+              >
+                <option value="">Select one...</option>
+                <option value="missed-calls">Missed calls</option>
+                <option value="slow-callbacks">Slow callbacks</option>
+                <option value="website-forms">Website forms</option>
+                <option value="instagram-dms">Instagram DMs</option>
+                <option value="after-hours">After-hours inquiries</option>
+                <option value="booking-reschedule">Booking / reschedule requests</option>
+                <option value="not-sure">Not sure</option>
+              </select>
+            </div>
             <div className="flex items-start gap-3 mt-6">
               <input 
                 required 
@@ -144,7 +145,7 @@ export default function DemoForm() {
               disabled={isSubmitting}
               className="w-full mt-6 px-8 py-4 bg-primary text-white rounded-lg font-medium hover:bg-primary-light transition-colors shadow-lg shadow-primary/20 disabled:opacity-70 disabled:cursor-not-allowed"
             >
-              {isSubmitting ? "Submitting..." : "Call Me With a Private Voice Demo"}
+              {isSubmitting ? "Submitting..." : "Request My Private Demo"}
             </button>
             
             <p className="text-xs text-text-muted text-center mt-4 px-4">

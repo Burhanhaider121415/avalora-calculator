@@ -63,7 +63,7 @@ export default function Calculator() {
       <div className="container mx-auto px-6 max-w-6xl">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-semibold text-primary mb-4">
-            Run your missed-call estimate
+            Run your missed-call and booking recovery estimate
           </h2>
           <div className="text-lg text-text-muted max-w-2xl mx-auto space-y-4">
             <p className="font-medium text-primary">Your front desk is not the problem.</p>
@@ -75,7 +75,7 @@ export default function Calculator() {
         <div className="flex flex-col lg:flex-row gap-8 items-start">
           {/* Inputs Section */}
           <div className="w-full lg:w-1/2 bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
-            <h3 className="text-xl font-semibold text-primary mb-2">Estimate your front-desk revenue leak</h3>
+            <h3 className="text-xl font-semibold text-primary mb-2">Estimate your missed-call recovery gap</h3>
             <p className="text-sm text-text-muted mb-8">Use your best estimate. You can adjust the numbers later.</p>
 
             <div className="space-y-6">
@@ -186,9 +186,9 @@ export default function Calculator() {
                   <div className="flex items-start gap-3">
                     <Info className="w-5 h-5 text-accent shrink-0 mt-0.5" />
                     <p>
-                      Based on your inputs, this estimates the value of appointment opportunities that may not convert when calls are missed, delayed, sent to voicemail, or handled after the patient has already contacted another clinic.
+                      Based on your inputs, this estimates the value of appointment opportunities that may not convert when calls are missed, callbacks are delayed, or booking requests are not captured quickly.
                       <span className="block mt-2 font-semibold text-white">This is not guaranteed lost revenue.</span>
-                      It is a diagnostic estimate to help you understand the possible cost of call leakage.
+                      It is a diagnostic estimate to help you understand the possible cost of unrecovered leads.
                     </p>
                   </div>
                 </div>
