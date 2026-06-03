@@ -5,11 +5,11 @@ import { Info } from "lucide-react";
 import { clsx } from "clsx";
 
 export default function Calculator() {
-  const [dailyCalls, setDailyCalls] = useState<number | "">(30);
-  const [missedRate, setMissedRate] = useState<number | "">(25);
-  const [apptValue, setApptValue] = useState<number | "">(600);
-  const [daysOpen, setDaysOpen] = useState<number | "">(5);
-  const [bookingRate, setBookingRate] = useState<number | "">(30);
+  const [dailyCalls, setDailyCalls] = useState<number | "">("");
+  const [missedRate, setMissedRate] = useState<number | "">("");
+  const [apptValue, setApptValue] = useState<number | "">("");
+  const [daysOpen, setDaysOpen] = useState<number | "">("");
+  const [bookingRate, setBookingRate] = useState<number | "">("");
   
   const [scenario, setScenario] = useState<"conservative" | "realistic" | "high">("realistic");
 
