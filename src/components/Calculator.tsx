@@ -34,19 +34,13 @@ export default function Calculator() {
     const missedPerDay = calls * (adjustedMissedRate / 100);
     const missedPerWeek = missedPerDay * days;
     const lostBookingsPerWeek = missedPerWeek * (adjustedConversion / 100);
-    const weeklyRevenueAtRisk = lostBookingsPerWeek * value;
-    const monthlyRevenueAtRisk = weeklyRevenueAtRisk * 4.33;
-    const annualRevenueAtRisk = weeklyRevenueAtRisk * 52;
-    
-    const starterFee = 699;
-    const breakEvenBookings = value > 0 ? (starterFee / value) : 0;
+    const weeklyOpportunityAtRisk = lostBookingsPerWeek * value;
+    const monthlyOpportunityAtRisk = weeklyOpportunityAtRisk * 4.33;
 
     return {
       missedPerWeek: Math.round(missedPerWeek * 10) / 10,
-      lostBookingsPerWeek: Math.round(lostBookingsPerWeek * 10) / 10,
-      monthlyRevenueAtRisk: Math.round(monthlyRevenueAtRisk),
-      annualRevenueAtRisk: Math.round(annualRevenueAtRisk),
-      breakEvenBookings: Math.round(breakEvenBookings * 10) / 10,
+      lostBookingsPerMonth: Math.round(lostBookingsPerWeek * 4.33 * 10) / 10,
+      monthlyOpportunityAtRisk: Math.round(monthlyOpportunityAtRisk),
     };
   }, [dailyCalls, missedRate, apptValue, daysOpen, bookingRate, scenario]);
 
@@ -63,25 +57,24 @@ export default function Calculator() {
       <div className="container mx-auto px-6 max-w-6xl">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-semibold text-primary mb-4">
-            Run your missed-call and booking recovery estimate
+            Run your booking leak estimate.
           </h2>
           <div className="text-lg text-text-muted max-w-2xl mx-auto space-y-4">
             <p className="font-medium text-primary">Your front desk is not the problem.</p>
-            <p>The problem is what happens when calls arrive while your team is checking in patients, answering treatment questions, handling payments, or managing walk-ins.</p>
-            <p className="text-sm">Use your real numbers below.</p>
+            <p>The leak usually happens when calls arrive while your team is with patients, callbacks are delayed, or booking requests are not routed cleanly.</p>
           </div>
         </div>
 
         <div className="flex flex-col lg:flex-row gap-8 items-start">
           {/* Inputs Section */}
           <div className="w-full lg:w-1/2 bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
-            <h3 className="text-xl font-semibold text-primary mb-2">Estimate your missed-call recovery gap</h3>
+            <h3 className="text-xl font-semibold text-primary mb-2">Inputs</h3>
             <p className="text-sm text-text-muted mb-8">Use your best estimate. You can adjust the numbers later.</p>
 
             <div className="space-y-6">
               <div>
-                <label className="block text-sm font-semibold text-primary mb-1">Average daily inbound calls</label>
-                <p className="text-xs text-text-muted mb-2">Use a normal business day. If you are unsure, start with 30. Most calls come from booking questions, treatment interest, reschedules, or follow-ups.</p>
+                <label className="block text-sm font-semibold text-primary mb-1">1. Average daily inbound calls</label>
+                <p className="text-xs text-text-muted mb-2">Use a normal business day. If you are unsure, start with 30.</p>
                 <input 
                   type="number" 
                   value={dailyCalls} 
@@ -91,7 +84,7 @@ export default function Calculator() {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-primary mb-1">Estimated missed / overflow call rate (%)</label>
+                <label className="block text-sm font-semibold text-primary mb-1">2. Missed / overflow rate (%)</label>
                 <p className="text-xs text-text-muted mb-2">Include calls missed after-hours, while lines are busy, or when a second caller comes in.</p>
                 <input 
                   type="number" 
@@ -102,8 +95,8 @@ export default function Calculator() {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-primary mb-1">Average appointment value ($)</label>
-                <p className="text-xs text-text-muted mb-2">Use the average value of a booked appointment, not lifetime value. Use your average Botox, filler, laser, facial, IV, or consult value.</p>
+                <label className="block text-sm font-semibold text-primary mb-1">3. Average appointment value ($)</label>
+                <p className="text-xs text-text-muted mb-2">Use your average Botox, filler, laser, facial, IV, or consult value.</p>
                 <input 
                   type="number" 
                   value={apptValue} 
@@ -114,8 +107,8 @@ export default function Calculator() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-semibold text-primary mb-1">Days open per week</label>
-                  <p className="text-xs text-text-muted mb-2">How many days your team actively handles calls.</p>
+                  <label className="block text-sm font-semibold text-primary mb-1">4. Days open per week</label>
+                  <p className="text-xs text-text-muted mb-2">How many days your team handles calls.</p>
                   <input 
                     type="number" 
                     value={daysOpen} 
@@ -124,8 +117,8 @@ export default function Calculator() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-primary mb-1">Booking conversion rate (%)</label>
-                  <p className="text-xs text-text-muted mb-2">Not every caller books. This keeps the estimate realistic.</p>
+                  <label className="block text-sm font-semibold text-primary mb-1">5. Booking conversion rate (%)</label>
+                  <p className="text-xs text-text-muted mb-2">Not every caller books. Keeps estimate realistic.</p>
                   <input 
                     type="number" 
                     value={bookingRate} 
@@ -134,11 +127,21 @@ export default function Calculator() {
                   />
                 </div>
               </div>
+
+              <button 
+                onClick={() => {
+                  import('@/utils/tracking').then(m => m.trackEvent('Run Leak Check click'));
+                  document.getElementById('results-card')?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="w-full px-8 py-4 bg-primary text-white rounded-lg font-medium hover:bg-primary-light transition-colors shadow-lg shadow-primary/20"
+              >
+                Run the Leak Check
+              </button>
             </div>
           </div>
 
           {/* Results Section */}
-          <div className="w-full lg:w-1/2 bg-primary rounded-2xl shadow-xl text-white p-6 md:p-8 flex flex-col h-full relative overflow-hidden">
+          <div id="results-card" className="w-full lg:w-1/2 bg-primary rounded-2xl shadow-xl text-white p-6 md:p-8 flex flex-col h-full relative overflow-hidden">
             {/* Subtle glow effect */}
             <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 rounded-full bg-accent/10 blur-3xl" />
             
@@ -177,9 +180,10 @@ export default function Calculator() {
               </div>
 
               <div className="mb-8">
-                <h3 className="text-white/80 text-lg font-medium mb-2">Estimated annual revenue at risk</h3>
+                <h3 className="text-white/80 text-lg font-medium mb-2">Estimated appointment opportunity at risk</h3>
                 <div className="text-5xl md:text-6xl font-bold text-white mb-4 tracking-tight">
-                  {formatCurrency(results.annualRevenueAtRisk)}
+                  {formatCurrency(results.monthlyOpportunityAtRisk)}
+                  <span className="text-lg font-normal text-white/60 ml-2">/ month</span>
                 </div>
                 
                 <div className="bg-white/5 border border-white/10 rounded-lg p-4 text-sm text-white/80 leading-relaxed">
@@ -188,37 +192,32 @@ export default function Calculator() {
                     <p>
                       Based on your inputs, this estimates the value of appointment opportunities that may not convert when calls are missed, callbacks are delayed, or booking requests are not captured quickly.
                       <span className="block mt-2 font-semibold text-white">This is not guaranteed lost revenue.</span>
-                      It is a diagnostic estimate to help you understand the possible cost of unrecovered leads.
+                      It is a directional estimate to help identify potential leakage in your call and booking flow.
                     </p>
                   </div>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                 <div className="bg-primary-light/50 p-4 rounded-lg border border-white/5">
                   <p className="text-2xl font-semibold mb-1">{results.missedPerWeek}</p>
                   <p className="text-sm font-medium text-accent">Missed calls per week</p>
                   <p className="text-xs text-white/60 mt-1">Potential call opportunities not answered live.</p>
                 </div>
                 <div className="bg-primary-light/50 p-4 rounded-lg border border-white/5">
-                  <p className="text-2xl font-semibold mb-1">{results.lostBookingsPerWeek * 4.33 > 1000 ? Math.round(results.lostBookingsPerWeek * 4.33) : (Math.round(results.lostBookingsPerWeek * 4.33 * 10) / 10)}</p>
-                  <p className="text-sm font-medium text-accent">Potential bookings at risk /mo</p>
+                  <p className="text-2xl font-semibold mb-1">{results.lostBookingsPerMonth}</p>
+                  <p className="text-sm font-medium text-accent">Potential bookings at risk / month</p>
                   <p className="text-xs text-white/60 mt-1">Estimated missed calls multiplied by your conversion rate.</p>
                 </div>
                 <div className="bg-primary-light/50 p-4 rounded-lg border border-white/5">
-                  <p className="text-2xl font-semibold mb-1">{formatCurrency(results.monthlyRevenueAtRisk)}</p>
-                  <p className="text-sm font-medium text-accent">Monthly revenue at risk</p>
+                  <p className="text-2xl font-semibold mb-1">{formatCurrency(results.monthlyOpportunityAtRisk)}</p>
+                  <p className="text-sm font-medium text-accent">Monthly opportunity at risk</p>
                   <p className="text-xs text-white/60 mt-1">A monthly view of the same estimate.</p>
-                </div>
-                <div className="bg-primary-light/50 p-4 rounded-lg border border-white/5">
-                  <p className="text-2xl font-semibold mb-1">{results.breakEvenBookings}</p>
-                  <p className="text-sm font-medium text-accent">Recovered bookings needed to break even</p>
-                  <p className="text-xs text-white/60 mt-1">How many additional booked appointments may cover Avalora's monthly fee.</p>
                 </div>
               </div>
               
               <p className="text-xs text-white/50 text-center px-4">
-                For many med spas, the question is not whether every missed call would have booked. The question is whether recovering even a small number of high-intent calls each month changes the math.
+                This is not guaranteed lost revenue. It is a directional estimate to help identify potential leakage in your call and booking flow.
               </p>
             </div>
           </div>

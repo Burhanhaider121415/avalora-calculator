@@ -4,8 +4,8 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
     
-    // Basic validation
-    if (!body.name || !body.email || !body.phone || !body.clinic) {
+    // Basic validation — only name, clinic, and contact (email or phone) are required
+    if (!body.name || !body.clinic || !body.contact) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
@@ -27,7 +27,7 @@ export async function POST(request: Request) {
         body: JSON.stringify({
           ...body,
           timestamp: new Date().toISOString(),
-          source: 'Avalora Calculator Landing Page'
+          source: 'Avalora Leak Check Page'
         }),
       }).catch(e => console.error("Webhook failed:", e));
     } else {
@@ -47,11 +47,11 @@ export async function POST(request: Request) {
     // }
 
     return NextResponse.json(
-      { message: 'Demo request received successfully' },
+      { message: 'Request received successfully' },
       { status: 200 }
     );
   } catch (error) {
-    console.error('Error processing demo request:', error);
+    console.error('Error processing request:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

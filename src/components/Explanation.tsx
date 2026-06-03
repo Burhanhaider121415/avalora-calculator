@@ -1,27 +1,32 @@
 import Image from "next/image";
-import { PhoneMissed, Clock, AlertCircle, CalendarX } from "lucide-react";
+import { PhoneMissed, Clock, AlertCircle, CalendarX, ClipboardX } from "lucide-react";
 
 export default function Explanation() {
   const cards = [
     {
       title: "Missed calls",
-      description: "When your front desk is checking in a patient, the second caller does not wait. They hang up and try the next clinic on their list.",
+      description: "One missed call during checkout can become a patient who keeps searching.",
       icon: PhoneMissed,
     },
     {
       title: "Slow callbacks",
-      description: "High-intent leads cool down fast. A callback hours later often reaches someone who has already booked elsewhere.",
+      description: "A high-intent patient may move on before your team has time to call back.",
       icon: Clock,
     },
     {
       title: "Booking friction",
-      description: "Too many steps, unclear next actions, or an unanswered form are enough to lose a patient who was ready to book.",
+      description: "A form, DM, or booking request can stall when the next step is not clear.",
       icon: AlertCircle,
     },
     {
       title: "After-hours inquiries",
-      description: "Callers searching for treatments at night or on weekends reach voicemail. Most do not leave a message — they move on.",
+      description: "Patients who reach voicemail at night may continue looking elsewhere.",
       icon: CalendarX,
+    },
+    {
+      title: "Unconfirmed requests",
+      description: "A booking request is not protected until it becomes a clear staff task.",
+      icon: ClipboardX,
     },
   ];
 
@@ -31,18 +36,11 @@ export default function Explanation() {
         <div className="flex flex-col lg:flex-row gap-16 items-center">
           <div className="w-full lg:w-1/2">
             <h2 className="text-3xl md:text-4xl font-semibold text-primary mb-6">
-              Most revenue leaks do not look dramatic.
+              Most booking leaks do not look dramatic.
             </h2>
             <div className="text-lg text-text-muted space-y-4 mb-8">
-              <p>They look like one missed call during checkout.</p>
-              <p>One website form that waits too long.</p>
-              <p>One Instagram DM that gets buried.</p>
-              <p>One after-hours inquiry that reaches voicemail.</p>
-              <p>One booking request that never gets confirmed.</p>
+              <p>They usually look like small moments that happen every week: a call during checkout, a form that waits too long, a DM that gets buried, or an after-hours inquiry that reaches voicemail.</p>
               <div className="w-12 h-px bg-gray-200 my-6"></div>
-              <p>
-                In a Miami med spa, the gap between a patient inquiring and a patient booking is often smaller than it looks — and faster to lose than most clinics expect.
-              </p>
               <p className="font-semibold text-primary">
                 Speed, availability, and follow-through determine who books and who moves on.
               </p>

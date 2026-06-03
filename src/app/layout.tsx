@@ -8,8 +8,16 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Miami Med Spa Revenue Leak Calculator",
-  description: "Avalora helps Miami med spas capture after-hours, overflow, and ad-driven booking opportunities with a bilingual AI call layer.",
+  title: "Miami Med Spa Booking Leak Check | Avalora",
+  description:
+    "Estimate how much appointment opportunity may be slipping through missed calls, slow callbacks, after-hours inquiries, and unfinished booking requests at your Miami med spa.",
+  alternates: {
+    canonical: "https://theavalora.com/leak-check",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({

@@ -1,36 +1,44 @@
 export default function Objections() {
   const faqs = [
     {
-      q: "Will this replace my receptionist?",
-      a: "No. Avalora works beside your front desk — not instead of it. It catches the leads and patient requests your team cannot reach fast enough when they are already with a patient, on another call, or off the clock."
+      q: "What is a booking leak for a med spa?",
+      a: "A booking leak is a point where patient interest fails to become a captured booking opportunity. Common leaks include missed calls, slow callbacks, after-hours voicemail, buried DMs, delayed form follow-up, and unclear handoffs to the front desk."
     },
     {
-      q: "Doesn't my CRM already handle this?",
-      a: "Your CRM manages the patients already in your system. Avalora catches the ones who never make it in: missed calls, website forms with no fast follow-up, Instagram DMs that get buried, and after-hours inquiries that hit voicemail. If a lead never gets a reply, it never reaches your CRM."
+      q: "How does the Avalora Leak Check work?",
+      a: "The Leak Check uses your call volume, missed or overflow rate, days open per week, booking conversion rate, and average appointment value to estimate appointment opportunity that may be at risk."
     },
     {
-      q: "Will it sound robotic?",
-      a: "You hear the voice before moving forward. The demo is built around a realistic med spa scenario so you can judge whether it feels appropriate for your patients before committing to anything."
+      q: "Is the estimate guaranteed lost revenue?",
+      a: "No. The estimate is not guaranteed lost revenue. It is a directional planning number to help identify where missed calls, slow callbacks, and unfinished booking requests may be creating leakage."
     },
     {
-      q: "Will it disrupt my current system?",
-      a: "The goal is no disruption. Avalora either integrates into your existing workflow or creates a clean process around it. It is designed to add capacity, not complexity."
+      q: "Why do Miami med spas lose booking opportunities?",
+      a: "Miami med spas often lose booking opportunities when the front desk is helping patients, phones are busy, Spanish-speaking inquiries create friction, DMs wait too long, or after-hours patients keep searching."
     },
     {
-      q: "Is the calculator number guaranteed?",
-      a: "No. It is an estimate based on your inputs — not a revenue guarantee. It does not include lifetime value, memberships, or referrals unless you model those separately. It is a starting point for understanding the scale of what may be slipping through."
+      q: "Does Avalora replace my receptionist?",
+      a: "No. Avalora supports your front desk by catching missed, overflow, and after-hours inquiries. Your team stays in control."
     },
     {
-      q: "What if we already have reminders or online booking?",
-      a: "Reminders help with patients already booked. Online booking helps patients who find it on their own. Avalora handles the gap in between: the calls that go unanswered, the forms that wait too long, the DMs that get buried, and the after-hours leads that reach voicemail and move on."
-    }
+      q: "What happens after I run the Leak Check?",
+      a: "You can hear the demo, review the handoff, and book a private fit call to see whether Avalora fits your clinic's workflow."
+    },
+    {
+      q: "Can Avalora help with Spanish-speaking inquiries?",
+      a: "Yes, where configured. Avalora can support English/Spanish intake, collect booking details, and route a bilingual handoff summary to your team."
+    },
+    {
+      q: "Does Avalora give medical advice?",
+      a: "No. Avalora does not diagnose, recommend treatments, determine treatment eligibility, or replace clinical judgment. It follows clinic-approved FAQs and escalates sensitive or clinical questions to the clinic team."
+    },
   ];
 
   return (
     <section className="w-full py-24 bg-background">
       <div className="container mx-auto px-6 max-w-3xl">
         <h2 className="text-3xl md:text-4xl font-semibold text-primary mb-12 text-center">
-          Built for med spas that care about revenue and reputation.
+          Built for med spas that care about booking flow, patient experience, and reputation.
         </h2>
         
         <div className="space-y-4">

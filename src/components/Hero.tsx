@@ -20,15 +20,15 @@ export default function Hero() {
 
       <div className="container relative z-20 mx-auto px-6 py-24 flex flex-col items-center text-center max-w-4xl">
         <span className="inline-block py-1 px-3 rounded-full bg-surface shadow-sm border border-accent/20 text-text-muted text-sm font-medium tracking-wide mb-6">
-          For Miami med spas with 1–2 locations, busy phones, and a front desk under pressure
+          For Miami med spas with busy phones and front desk pressure
         </span>
         
         <h1 className="text-4xl md:text-5xl lg:text-6xl font-semibold text-primary leading-tight mb-6">
-          See how much appointment revenue may be slipping through missed calls and slow follow-up.
+          See how much appointment opportunity may be slipping through missed calls and slow follow-up.
         </h1>
         
         <p className="text-xl md:text-2xl text-text-muted max-w-2xl mx-auto mb-10 leading-relaxed font-light">
-          Answer five simple questions and estimate the appointment revenue your med spa may have at risk when calls are missed, callbacks are delayed, or booking requests are not captured fast enough.
+          Answer five simple questions to estimate the booking opportunity your med spa may have at risk when calls are missed, callbacks are delayed, or booking requests are not captured fast enough.
         </p>
         
         <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
@@ -37,14 +37,14 @@ export default function Hero() {
             onClick={() => import('@/utils/tracking').then(m => m.trackEvent('Primary CTA click'))}
             className="w-full sm:w-auto px-8 py-4 bg-primary text-white rounded-lg font-medium hover:bg-primary-light transition-colors shadow-lg shadow-primary/20"
           >
-            Estimate My Lead Recovery Gap
+            Run the Leak Check
           </Link>
           <Link 
             href="#demo" 
             onClick={() => import('@/utils/tracking').then(m => m.trackEvent('Secondary CTA click'))}
             className="w-full sm:w-auto px-8 py-4 bg-surface text-primary border border-primary/10 rounded-lg font-medium hover:bg-gray-50 transition-colors shadow-sm"
           >
-            Request a Private Demo
+            Book a Private Fit Call
           </Link>
         </div>
         
