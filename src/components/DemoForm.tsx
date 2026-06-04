@@ -1,5 +1,7 @@
 "use client";
 
+import Script from "next/script";
+
 export default function DemoForm() {
   return (
     <section id="demo" className="w-full py-24 bg-surface border-t border-gray-100">
@@ -19,10 +21,9 @@ export default function DemoForm() {
           data-url="https://calendly.com/burhanwithavalora?hide_gdpr_banner=1"
           style={{ minWidth: "320px", height: "700px" }}
         />
-        <script
-          type="text/javascript"
+        <Script
           src="https://assets.calendly.com/assets/external/widget.js"
-          async
+          strategy="lazyOnload"
         />
 
         <p className="text-xs text-text-muted text-center mt-6 px-4">
