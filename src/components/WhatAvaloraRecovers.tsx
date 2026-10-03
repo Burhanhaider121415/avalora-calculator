@@ -1,32 +1,9 @@
-import { CheckCircle2 } from "lucide-react";
-
+const categories = [
+  ['Missed + overflow calls', 'Catch callers when staff are already occupied.'],
+  ['After-hours inquiries', 'Capture intent instead of relying only on voicemail.'],
+  ['Ad, form + selected digital inquiries', 'Respond while patient interest is still active.'],
+  ['Booking + staff handoffs', 'Turn the conversation into a clear next action for the clinic.'],
+];
 export default function WhatAvaloraRecovers() {
-  const items = [
-    "Missed calls from high-intent patients",
-    "After-hours booking inquiries",
-    "Slow callback opportunities",
-    "Instagram DM and form inquiries where configured",
-    "English/Spanish intake gaps",
-    "Reschedule and follow-up requests",
-    "Clean staff handoffs for booking review",
-  ];
-
-  return (
-    <section className="w-full py-24 bg-background">
-      <div className="container mx-auto px-6 max-w-4xl">
-        <h2 className="text-3xl md:text-4xl font-semibold text-primary mb-10 text-center">
-          What Avalora helps recover
-        </h2>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-3xl mx-auto">
-          {items.map((item, i) => (
-            <div key={i} className="flex items-start gap-3">
-              <CheckCircle2 className="w-5 h-5 text-secondary shrink-0 mt-0.5" />
-              <span className="text-text-main leading-relaxed">{item}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
+  return <section className="section recover-section" aria-labelledby="recover-heading"><div className="wrap recover-layout"><div><p className="eyebrow">What Avalora helps recover</p><h2 id="recover-heading">Avalora catches the moments your team cannot reach in time.</h2><p>Missed calls. After-hours inquiries. Slow ad or form follow-up. Booking requests that stall. Avalora captures the intent, gives the patient a next step, and routes the handoff back to your team or existing workflow.</p><p className="reassurance">Built to support your front desk — not replace it.</p></div><div className="recover-list">{categories.map(([title, text], i) => <article key={title}><span aria-hidden="true">0{i + 1}</span><div><h3>{title}</h3><p>{text}</p></div></article>)}</div></div></section>;
 }

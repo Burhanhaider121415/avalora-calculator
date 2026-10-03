@@ -1,35 +1,25 @@
-"use client";
-
-import Script from "next/script";
-
+'use client';
+import { useEffect, useRef } from 'react';
+import Image from 'next/image';
+import Script from 'next/script';
+import { trackEvent } from '@/utils/tracking';
+type CalendlyWindow = Window & { Calendly?: { initInlineWidget: (options: { url: string; parentElement: HTMLElement; resize: boolean }) => void } };
+const scheduler = 'https://calendly.com/burhanwithavalora/30min';
 export default function DemoForm() {
-  return (
-    <section id="demo" className="w-full py-24 bg-surface border-t border-gray-100">
-      <div className="container mx-auto px-6 max-w-3xl">
-        <div className="text-center mb-10">
-          <h2 className="text-3xl md:text-4xl font-semibold text-primary mb-4">
-            Want to see where Avalora fits your call flow?
-          </h2>
-          <p className="text-lg text-text-muted">
-            After your Leak Check, book a private fit call to review where patient inquiries may be slipping and how Avalora could support your front desk.
-          </p>
-        </div>
-
-        {/* Calendly Inline Widget */}
-        <div
-          className="calendly-inline-widget rounded-2xl overflow-hidden shadow-sm border border-gray-100"
-          data-url="https://calendly.com/burhanwithavalora?hide_gdpr_banner=1"
-          style={{ minWidth: "320px", height: "700px" }}
-        />
-        <Script
-          src="https://assets.calendly.com/assets/external/widget.js"
-          strategy="lazyOnload"
-        />
-
-        <p className="text-xs text-text-muted text-center mt-6 px-4">
-          We use this information to prepare a relevant call flow review. No spam. No guaranteed revenue claims.
-        </p>
-      </div>
-    </section>
-  );
+  const calendar = useRef<HTMLDivElement>(null);
+  const init = () => {
+    const element = calendar.current;
+    const calendly = (window as CalendlyWindow).Calendly;
+    if (!element || !calendly || element.querySelector('iframe')) return;
+    calendly.initInlineWidget({ url: `${scheduler}?hide_gdpr_banner=1&hide_event_type_details=1&background_color=faf7ee&text_color=252e32&primary_color=124145`, parentElement: element, resize: true });
+  };
+  useEffect(() => {
+    const onMessage = (event: MessageEvent) => {
+      if (event.origin !== 'https://calendly.com' || event.source !== calendar.current?.querySelector('iframe')?.contentWindow) return;
+      if (event.data?.event === 'calendly.event_scheduled') trackEvent('fit_call_booked');
+    };
+    window.addEventListener('message', onMessage);
+    return () => window.removeEventListener('message', onMessage);
+  }, []);
+  return <section id="demo" className="section booking-section" aria-labelledby="booking-heading"><div className="wrap booking-layout"><div className="booking-copy"><p className="eyebrow">A conversation, not a commitment</p><h2 id="booking-heading">Want to see where Avalora would fit?</h2><p>We’ll review your current phone, follow-up and booking flow and identify whether there is a recovery gap worth fixing. If there isn’t, we’ll tell you.</p><div className="founder"><Image src="/images/burhan-haider.jpeg" alt="Burhan Haider, founder of Avalora" width={100} height={100} /><div><strong>Burhan Haider</strong><span>Founder, Avalora</span></div></div><a className="button primary" href={scheduler} target="_blank" rel="noopener noreferrer" onClick={() => trackEvent('fit_call_clicked')}>Book a Private Fit Call <span aria-hidden="true">↗</span></a><div className="booking-trust"><p>Security &amp; privacy information available before implementation.</p><div><a href="https://theavalora.com/hipaa-security">HIPAA &amp; Security</a><a href="https://theavalora.com/business-associate-agreement">BAA</a><a href="https://theavalora.com/communication-consent">Communication Consent</a></div></div></div><div className="calendar-panel"><div ref={calendar} className="calendar-embed" /><Script src="https://assets.calendly.com/assets/external/widget.js" strategy="lazyOnload" onReady={init} /><p className="calendar-note">Times appear in your timezone. <a href={scheduler} target="_blank" rel="noopener noreferrer" onClick={() => trackEvent('fit_call_clicked')}>Open the scheduler separately ↗</a></p></div></div></section>;
 }

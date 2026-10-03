@@ -1,228 +1,88 @@
-"use client";
+'use client';
+import { useRef, useState } from 'react';
+import { presets, calculate, type ClinicInputs, type Scenario } from '@/lib/calculation';
+import { trackEvent } from '@/utils/tracking';
 
-import { useState, useMemo } from "react";
-import { Info } from "lucide-react";
-import { clsx } from "clsx";
+const scenarios: { key: Scenario; label: string }[] = [{ key: 'conservative', label: 'Conservative' }, { key: 'realistic', label: 'Working estimate' }, { key: 'high', label: 'Upper range' }];
+const currency = (n: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(n);
+type Values = Record<keyof ClinicInputs, string>;
+const initial: Values = { dailyCalls: '', apptValue: '', daysOpen: '', missedRate: '30', bookingRate: '20' };
 
 export default function Calculator() {
-  const [dailyCalls, setDailyCalls] = useState<number | "">("");
-  const [missedRate, setMissedRate] = useState<number | "">("");
-  const [apptValue, setApptValue] = useState<number | "">("");
-  const [daysOpen, setDaysOpen] = useState<number | "">("");
-  const [bookingRate, setBookingRate] = useState<number | "">("");
-  
-  const [scenario, setScenario] = useState<"conservative" | "realistic" | "high">("realistic");
-
-  const results = useMemo(() => {
-    const calls = Number(dailyCalls) || 0;
-    const missed = Number(missedRate) || 0;
-    const value = Number(apptValue) || 0;
-    const days = Number(daysOpen) || 0;
-    const conversion = Number(bookingRate) || 0;
-
-    let adjustedMissedRate = missed;
-    let adjustedConversion = conversion;
-
-    if (scenario === "conservative") {
-      adjustedMissedRate = Math.max(5, missed - 10);
-      adjustedConversion = Math.max(5, conversion - 10);
-    } else if (scenario === "high") {
-      adjustedMissedRate = Math.min(100, missed + 15);
-      adjustedConversion = Math.min(100, conversion + 10);
-    }
-
-    const missedPerDay = calls * (adjustedMissedRate / 100);
-    const missedPerWeek = missedPerDay * days;
-    const lostBookingsPerWeek = missedPerWeek * (adjustedConversion / 100);
-    const weeklyOpportunityAtRisk = lostBookingsPerWeek * value;
-    const monthlyOpportunityAtRisk = weeklyOpportunityAtRisk * 4.33;
-
-    return {
-      missedPerWeek: Math.round(missedPerWeek * 10) / 10,
-      lostBookingsPerMonth: Math.round(lostBookingsPerWeek * 4.33 * 10) / 10,
-      monthlyOpportunityAtRisk: Math.round(monthlyOpportunityAtRisk),
-    };
-  }, [dailyCalls, missedRate, apptValue, daysOpen, bookingRate, scenario]);
-
-  const formatCurrency = (val: number) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-      maximumFractionDigits: 0,
-    }).format(val);
+  const [values, setValues] = useState<Values>(initial);
+  const [scenario, setScenario] = useState<Scenario | 'custom'>('realistic');
+  const [errors, setErrors] = useState<Partial<Values>>({});
+  const [submitted, setSubmitted] = useState(false);
+  const started = useRef(false);
+  const advanced = useRef<HTMLDetailsElement>(null);
+  const resultPanel = useRef<HTMLDivElement>(null);
+  const valid = Object.entries(values).every(([key, value]) => {
+    const n = Number(value);
+    if (!value.trim() || !Number.isFinite(n)) return false;
+    if (key === 'daysOpen') return n >= 1 && n <= 7 && Number.isInteger(n);
+    if (key === 'missedRate' || key === 'bookingRate') return n >= 0 && n <= 100;
+    return n > 0 && n <= 1000000000;
+  });
+  const inputs = Object.fromEntries(Object.entries(values).map(([key, value]) => [key, Number(value)])) as ClinicInputs;
+  const result = submitted && valid ? calculate(inputs) : null;
+  const update = (key: keyof Values, value: string) => {
+    setValues(old => ({ ...old, [key]: value }));
+    setErrors(old => ({ ...old, [key]: undefined }));
+    if (key === 'missedRate' || key === 'bookingRate') { setScenario('custom'); trackEvent('assumptions_adjusted', { field: key }); }
   };
-
-  return (
-    <section id="calculator" className="w-full py-24 bg-surface">
-      <div className="container mx-auto px-6 max-w-6xl">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-semibold text-primary mb-4">
-            Run your booking leak estimate.
-          </h2>
-          <div className="text-lg text-text-muted max-w-2xl mx-auto space-y-4">
-            <p className="font-medium text-primary">Your front desk is not the problem.</p>
-            <p>The leak usually happens when calls arrive while your team is with patients, callbacks are delayed, or booking requests are not routed cleanly.</p>
-          </div>
-        </div>
-
-        <div className="flex flex-col lg:flex-row gap-8 items-start">
-          {/* Inputs Section */}
-          <div className="w-full lg:w-1/2 bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
-            <h3 className="text-xl font-semibold text-primary mb-2">Inputs</h3>
-            <p className="text-sm text-text-muted mb-8">Use your best estimate. You can adjust the numbers later.</p>
-
-            <div className="space-y-6">
-              <div>
-                <label className="block text-sm font-semibold text-primary mb-1">1. Average daily inbound calls</label>
-                <p className="text-xs text-text-muted mb-2">Use a normal business day. If you are unsure, start with 30.</p>
-                <input 
-                  type="number" 
-                  value={dailyCalls} 
-                  onChange={(e) => setDailyCalls(e.target.value === "" ? "" : Number(e.target.value))}
-                  className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all bg-gray-50/50"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-primary mb-1">2. Missed / overflow rate (%)</label>
-                <p className="text-xs text-text-muted mb-2">Include calls missed after-hours, while lines are busy, or when a second caller comes in.</p>
-                <input 
-                  type="number" 
-                  value={missedRate} 
-                  onChange={(e) => setMissedRate(e.target.value === "" ? "" : Number(e.target.value))}
-                  className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all bg-gray-50/50"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-primary mb-1">3. Average appointment value ($)</label>
-                <p className="text-xs text-text-muted mb-2">Use your average Botox, filler, laser, facial, IV, or consult value.</p>
-                <input 
-                  type="number" 
-                  value={apptValue} 
-                  onChange={(e) => setApptValue(e.target.value === "" ? "" : Number(e.target.value))}
-                  className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all bg-gray-50/50"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-semibold text-primary mb-1">4. Days open per week</label>
-                  <p className="text-xs text-text-muted mb-2">How many days your team handles calls.</p>
-                  <input 
-                    type="number" 
-                    value={daysOpen} 
-                    onChange={(e) => setDaysOpen(e.target.value === "" ? "" : Number(e.target.value))}
-                    className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all bg-gray-50/50"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-primary mb-1">5. Booking conversion rate (%)</label>
-                  <p className="text-xs text-text-muted mb-2">Not every caller books. Keeps estimate realistic.</p>
-                  <input 
-                    type="number" 
-                    value={bookingRate} 
-                    onChange={(e) => setBookingRate(e.target.value === "" ? "" : Number(e.target.value))}
-                    className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all bg-gray-50/50"
-                  />
-                </div>
-              </div>
-
-              <button 
-                onClick={() => {
-                  import('@/utils/tracking').then(m => m.trackEvent('Run Leak Check click'));
-                  document.getElementById('results-card')?.scrollIntoView({ behavior: 'smooth' });
-                }}
-                className="w-full px-8 py-4 bg-primary text-white rounded-lg font-medium hover:bg-primary-light transition-colors shadow-lg shadow-primary/20"
-              >
-                Run the Leak Check
-              </button>
-            </div>
-          </div>
-
-          {/* Results Section */}
-          <div id="results-card" className="w-full lg:w-1/2 bg-primary rounded-2xl shadow-xl text-white p-6 md:p-8 flex flex-col h-full relative overflow-hidden">
-            {/* Subtle glow effect */}
-            <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 rounded-full bg-accent/10 blur-3xl" />
-            
-            <div className="relative z-10 flex-grow">
-              <div className="flex bg-white/10 p-1 rounded-lg mb-8 text-sm font-medium w-full overflow-hidden">
-                <button 
-                  onClick={() => {
-                    import('@/utils/tracking').then(m => m.trackEvent('Calculate button click', { scenario: 'conservative' }));
-                    setScenario("conservative");
-                  }}
-                  className={clsx("flex-1 py-2 px-3 rounded-md transition-colors", scenario === "conservative" ? "bg-white text-primary shadow-sm" : "hover:bg-white/5 text-white/80")}
-                  title="Lower leakage assumptions."
-                >
-                  Conservative
-                </button>
-                <button 
-                  onClick={() => {
-                    import('@/utils/tracking').then(m => m.trackEvent('Calculate button click', { scenario: 'realistic' }));
-                    setScenario("realistic");
-                  }}
-                  className={clsx("flex-1 py-2 px-3 rounded-md transition-colors", scenario === "realistic" ? "bg-white text-primary shadow-sm" : "hover:bg-white/5 text-white/80")}
-                  title="A practical middle estimate."
-                >
-                  Realistic
-                </button>
-                <button 
-                  onClick={() => {
-                    import('@/utils/tracking').then(m => m.trackEvent('Calculate button click', { scenario: 'high' }));
-                    setScenario("high");
-                  }}
-                  className={clsx("flex-1 py-2 px-3 rounded-md transition-colors", scenario === "high" ? "bg-white text-primary shadow-sm" : "hover:bg-white/5 text-white/80")}
-                  title="Useful during ad campaigns, peak hours, and seasonal demand."
-                >
-                  High leakage
-                </button>
-              </div>
-
-              <div className="mb-8">
-                <h3 className="text-white/80 text-lg font-medium mb-2">Estimated appointment opportunity at risk</h3>
-                <div className="text-5xl md:text-6xl font-bold text-white mb-4 tracking-tight">
-                  {formatCurrency(results.monthlyOpportunityAtRisk)}
-                  <span className="text-lg font-normal text-white/60 ml-2">/ month</span>
-                </div>
-                
-                <div className="bg-white/5 border border-white/10 rounded-lg p-4 text-sm text-white/80 leading-relaxed">
-                  <div className="flex items-start gap-3">
-                    <Info className="w-5 h-5 text-accent shrink-0 mt-0.5" />
-                    <p>
-                      Based on your inputs, this estimates the value of appointment opportunities that may not convert when calls are missed, callbacks are delayed, or booking requests are not captured quickly.
-                      <span className="block mt-2 font-semibold text-white">This is not guaranteed lost revenue.</span>
-                      It is a directional estimate to help identify potential leakage in your call and booking flow.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                <div className="bg-primary-light/50 p-4 rounded-lg border border-white/5">
-                  <p className="text-2xl font-semibold mb-1">{results.missedPerWeek}</p>
-                  <p className="text-sm font-medium text-accent">Missed calls per week</p>
-                  <p className="text-xs text-white/60 mt-1">Potential call opportunities not answered live.</p>
-                </div>
-                <div className="bg-primary-light/50 p-4 rounded-lg border border-white/5">
-                  <p className="text-2xl font-semibold mb-1">{results.lostBookingsPerMonth}</p>
-                  <p className="text-sm font-medium text-accent">Potential bookings at risk / month</p>
-                  <p className="text-xs text-white/60 mt-1">Estimated missed calls multiplied by your conversion rate.</p>
-                </div>
-                <div className="bg-primary-light/50 p-4 rounded-lg border border-white/5">
-                  <p className="text-2xl font-semibold mb-1">{formatCurrency(results.monthlyOpportunityAtRisk)}</p>
-                  <p className="text-sm font-medium text-accent">Monthly opportunity at risk</p>
-                  <p className="text-xs text-white/60 mt-1">A monthly view of the same estimate.</p>
-                </div>
-              </div>
-              
-              <p className="text-xs text-white/50 text-center px-4">
-                This is not guaranteed lost revenue. It is a directional estimate to help identify potential leakage in your call and booking flow.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
+  const submit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const invalid: Partial<Values> = {};
+    for (const key of Object.keys(values) as (keyof Values)[]) {
+      const n = Number(values[key]);
+      if (values[key].trim() === '' || !Number.isFinite(n)) invalid[key] = 'Enter a number to continue.';
+      else if (key === 'daysOpen' && (n < 1 || n > 7 || !Number.isInteger(n))) invalid[key] = 'Use a whole number from 1 to 7.';
+      else if ((key === 'missedRate' || key === 'bookingRate') && (n < 0 || n > 100)) invalid[key] = 'Use a percentage from 0 to 100.';
+      else if (n < 0 || ((key === 'dailyCalls' || key === 'apptValue') && n === 0)) invalid[key] = 'Enter a number greater than zero.';
+      else if (n > 1000000000) invalid[key] = 'Check this number; use a value below 1 billion.';
+    }
+    setErrors(invalid);
+    const first = Object.keys(invalid)[0];
+    if (first) {
+      if ((first === 'missedRate' || first === 'bookingRate') && advanced.current) advanced.current.open = true;
+      document.getElementById(first)?.focus();
+      return;
+    }
+    setSubmitted(true);
+    trackEvent('leak_check_completed', { scenario });
+    resultPanel.current?.focus({ preventScroll: true });
+    resultPanel.current?.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth', block: 'nearest' });
+  };
+  const field = (key: keyof Values, label: string, helper: string, min: number, max?: number, step = 'any') => <div className="field" key={key}>
+    <label htmlFor={key}>{label}</label><p id={`${key}-help`}>{helper}</p>
+    <input id={key} name={key} type="number" inputMode="decimal" value={values[key]} min={min} max={max} step={step} onChange={e => update(key, e.target.value)} aria-describedby={`${key}-help${errors[key] ? ` ${key}-error` : ''}`} aria-invalid={!!errors[key]} />
+    {errors[key] && <p className="field-error" id={`${key}-error`}>{errors[key]}</p>}
+  </div>;
+  return <section id="calculator" className="section calculator-section" aria-labelledby="calculator-heading"><div className="wrap">
+    <div className="section-heading"><p className="eyebrow">Avalora Leak Check</p><h2 id="calculator-heading">A clearer view of your booking opportunity.</h2></div>
+    <div className="calculator-grid"><form className="input-panel" onSubmit={submit} onFocus={() => { if (!started.current) { trackEvent('leak_check_started'); started.current = true; } }} noValidate>
+      <h3>Your clinic numbers</h3><p className="panel-intro">Use a typical week. You can refine the numbers as you go.</p>
+      {field('dailyCalls', 'Calls your clinic receives in a typical day', 'A rough average is fine. If available, check your recent phone report.', 0)}
+      {field('apptValue', 'Average appointment value ($)', 'Use your average Botox, filler, laser, facial, IV, or consult value.', 0)}
+      {field('daysOpen', 'Days open per week', 'How many days your clinic handles calls.', 1, 7, '1')}
+      <div className="assumptions-intro"><h4>Assumptions</h4><p>Using {scenario === 'custom' ? 'your clinic’s assumptions' : scenario === 'realistic' ? 'industry working assumptions' : scenario === 'conservative' ? 'Conservative scenario bounds' : 'Upper Range scenario bounds'}: {values.missedRate || '—'}% missed/overflow and {values.bookingRate || '—'}% booking opportunity. Adjust if you know your clinic’s actual numbers.</p>
+</div>
+      <details ref={advanced} className="advanced"><summary>Adjust assumptions</summary><div className="details-body">
+        {field('missedRate', 'Missed / overflow rate (%)', 'Include unanswered calls while staff are busy or the clinic is closed.', 0, 100)}
+        {field('bookingRate', 'Booking opportunity rate (%)', 'Estimated share of missed calls that may have resulted in a booking if reached. We use 20% when your actual rate is unknown.', 0, 100)}
+        <p>Your rates are used directly. Selecting a scenario loads that scenario’s two rates.</p>
+      </div></details>
+      {Object.values(errors).some(Boolean) && <p className="field-error" role="alert">Check the highlighted fields before calculating.</p>}
+      <button className="button primary full" type="submit">Run the Leak Check <span aria-hidden="true">→</span></button>
+    </form>
+    <div className="result-panel" id="results-card" ref={resultPanel} tabIndex={-1} aria-label="Leak Check result">
+      <p className="result-eyebrow">Your monthly view</p><div className="scenario-selector" role="group" aria-label="Estimate scenario">{scenarios.map(s => <button key={s.key} type="button" aria-pressed={scenario === s.key} onClick={() => { setScenario(s.key); setValues(old => ({ ...old, missedRate: String(presets[s.key].missedRate), bookingRate: String(presets[s.key].bookingRate) })); setErrors(old => ({ ...old, missedRate: undefined, bookingRate: undefined })); trackEvent('assumptions_adjusted', { scenario: s.key }); }}>{s.label}</button>)}</div>
+      {scenario === 'custom' && <p className="custom-note">Custom assumptions selected</p>}
+      <div aria-live="polite" aria-atomic="true">{result ? <><h3>Estimated monthly booking value exposed</h3><p className="estimate-value">{currency(result.monthlyOpportunityAtRisk)}<span> / month</span></p><p className="result-explanation">This is an estimate of potential booking value exposed to missed or delayed communication—not guaranteed lost revenue.</p>
+        <dl className="result-metrics"><div><dt>Missed calls / week</dt><dd>{new Intl.NumberFormat('en-US').format(result.missedPerWeek)}</dd></div><div><dt>Potential bookings exposed / month</dt><dd>{new Intl.NumberFormat('en-US').format(result.lostBookingsPerMonth)}</dd></div></dl>
+      </> : <div className="empty-result"><span className="recovery-mark" aria-hidden="true" /><h3>{submitted ? 'Check your clinic numbers' : 'Your estimate will appear here'}</h3><p>{submitted ? 'Enter valid numbers in each field to update your estimate.' : 'Enter your clinic numbers to see the booking opportunity that may be exposed each month.'}</p></div>}</div>
+      <details className="result-assumptions"><summary>View assumptions</summary><div className="details-body"><p>Each scenario changes only the missed/overflow and booking opportunity rates.</p><ul><li>Conservative: 20% missed/overflow · 15% booking opportunity.</li><li>Working estimate: 30% missed/overflow · 20% booking opportunity.</li><li>Upper range: 35% missed/overflow · 30% booking opportunity.</li></ul>
+      <p>Current rates: {values.missedRate || '—'}% missed/overflow · {values.bookingRate || '—'}% booking opportunity. Custom rates are used immediately.</p>
+      <p>The booking opportunity rate is the estimated share of missed inbound calls that could plausibly become bookings if handled. It is not a qualified-lead conversion rate.</p><p>Conservative and Upper Range are planning bounds, not claims about every med spa. The Working Estimate applies industry context to your call volume; it does not establish your clinic’s actual performance.</p><p className="assumption-sources">Source context: <a href="https://www.zenoti.com/ai-workforce/ai-receptionist">Zenoti med-spa call data</a> and <a href="https://www.invoca.com/reports/the-invoca-healthcare-lead-conversion-benchmarks-report-2026">Invoca healthcare call benchmarks</a>. The 20% rate is a working approximation for missed calls, derived from answered-call data.</p></div></details>
+    </div></div></div></section>;
 }
